@@ -9,11 +9,11 @@
     <item
         android:id="@+id/navigation_booking"
         android:icon="@drawable/ic_add_30"
-        android:title="Đặt lịch" />
+        android:title="@string/datLich" />
 
     <item
         android:id="@+id/navigation_schedule"
         android:icon="@drawable/ic_calendar_30"
-        android:title="Xem lịch" />
+        android:title="@string/xemLich" />
 
 </menu>

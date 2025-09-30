@@ -4,4 +4,9 @@
     <string name="title_dashboard">Dashboard</string>
     <string name="title_notifications">Notifications</string>
     <string name="thongTinCaNhan">Thông tin cá nhân</string>
+    <string name="datLich">Đặt lịch</string>
+    <string name="xemLich">Xem lịch</string>
+    <string name="profile">Profile</string>
+    <string name="booking">Booking</string>
+    <string name="schedule">Schedule</string>
 </resources>

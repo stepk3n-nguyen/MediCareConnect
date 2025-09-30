@@ -8,14 +8,14 @@
     <fragment
         android:id="@+id/navigation_booking"
         android:name="com.example.medicareconnect.ui.booking.BookingFragment"
-        android:label="@string/thongTinCaNhan"
-        tools:layout="@layout/fragment_profile"/>
+        android:label="@string/datLich"
+        tools:layout="@layout/fragment_profile" />
 
     <fragment
         android:id="@+id/navigation_profile"
         android:name="com.example.medicareconnect.ui.profile.ProfileFragment"
-        android:label="Đặt lịch"
-        tools:layout="@layout/fragment_profile"/>
+        android:label="@string/thongTinCaNhan"
+        tools:layout="@layout/fragment_profile" />
 
     <fragment
         android:id="@+id/navigation_schedule"
