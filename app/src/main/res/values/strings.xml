@@ -10,4 +10,12 @@
     <string name="booking">Booking</string>
     <string name="schedule">Schedule</string>
     <string name="logo">logo</string>
+    <string name="dangNhap">Đăng nhập</string>
+    <string name="email">Email</string>
+    <string name="nhapEmail">Nhập email</string>
+    <string name="matKhau">Mật khẩu</string>
+    <string name="nhapMatKhau">Nhập mật khẩu</string>
+    <string name="chuaCoTaiKhoanDangKyNgay">Chưa có tài khoản? Đăng ký ngay!</string>
+    <string name="hoacDangNhapBang">hoặc đăng nhập bằng</string>
+    <string name="dangNhapBangGoogle">Đăng nhập bằng Google</string>
 </resources>

@@ -1,4 +1,4 @@
-package com.example.medicareconnect.ui.profile
+package com.example.medicareconnect.ui.patient.profile
 
 import android.os.Bundle
 import android.view.LayoutInflater

@@ -7,13 +7,13 @@
 
     <fragment
         android:id="@+id/navigation_booking"
-        android:name="com.example.medicareconnect.ui.booking.BookingFragment"
+        android:name="com.example.medicareconnect.ui.patient.booking.BookingFragment"
         android:label="@string/datLich"
         tools:layout="@layout/fragment_booking" />
 
     <fragment
         android:id="@+id/navigation_profile"
-        android:name="com.example.medicareconnect.ui.profile.ProfileFragment"
+        android:name="com.example.medicareconnect.ui.patient.profile.ProfileFragment"
         android:label="@string/thongTinCaNhan"
         tools:layout="@layout/fragment_profile" />
 

@@ -1,4 +1,4 @@
-package com.example.medicareconnect.ui.booking
+package com.example.medicareconnect.ui.patient.booking
 
 import android.os.Bundle
 import android.view.LayoutInflater
