@@ -147,7 +147,7 @@
         android:src="@drawable/ic_google_30"
         app:layout_constraintEnd_toEndOf="@+id/btnLogin"
         app:layout_constraintStart_toStartOf="@+id/btnLogin"
-        app:layout_constraintTop_toBottomOf="@+id/tvOtherLogin" />
+        app:layout_constraintTop_toBottomOf="@+id/tvOtherLogin"/>
 
 </androidx.constraintlayout.widget.ConstraintLayout>
 

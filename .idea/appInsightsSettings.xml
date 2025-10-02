@@ -8,10 +8,10 @@
             <InsightsFilterSettings>
               <option name="connection">
                 <ConnectionSetting>
-                  <option name="appId" value="PLACEHOLDER" />
-                  <option name="mobileSdkAppId" value="" />
-                  <option name="projectId" value="" />
-                  <option name="projectNumber" value="" />
+                  <option name="appId" value="com.example.medicareconnect" />
+                  <option name="mobileSdkAppId" value="1:525863390691:android:8f1d38ebab80d9fb9764d6" />
+                  <option name="projectId" value="medicare-connect-d75cc" />
+                  <option name="projectNumber" value="525863390691" />
                 </ConnectionSetting>
               </option>
               <option name="signal" value="SIGNAL_UNSPECIFIED" />
