@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/doctor_navigation"
+    app:startDestination="@id/navigation_doctor_schedule">
+
+    <fragment
+        android:id="@+id/navigation_doctor_schedule"
+        android:name="com.example.medicareconnect.ui.doctor.DoctorScheduleFragment"
+        android:label="Lịch khám"
+        tools:layout="@layout/fragment_doctor_schedule" />
+
+    <fragment
+        android:id="@+id/navigation_patient_order"
+        android:name="com.example.medicareconnect.ui.doctor.PatientOrderFragment"
+        android:label="Thứ tự bệnh nhân"
+        tools:layout="@layout/fragment_patient_order" />
+
+    <fragment
+        android:id="@+id/navigation_doctor_profile"
+        android:name="com.example.medicareconnect.ui.doctor.DoctorProfileFragment"
+        android:label="Thông tin bác sĩ"
+        tools:layout="@layout/fragment_doctor_profile" />
+
+</navigation>

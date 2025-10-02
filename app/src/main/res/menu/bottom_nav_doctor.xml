@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <item
+        android:id="@+id/navigation_doctor_profile"
+        android:icon="@drawable/ic_person_30"
+        android:title="Thông tin bác sĩ" />
+
+    <item
+        android:id="@+id/navigation_doctor_schedule"
+        android:icon="@drawable/ic_calendar_30"
+        android:title="Lịch khám" />
+
+    <item
+        android:id="@+id/navigation_patient_order"
+        android:icon="@drawable/ic_list_30"
+        android:title="Thứ tự bệnh nhân" />
+
+</menu>
