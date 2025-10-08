@@ -1,14 +1,25 @@
 package com.example.medicareconnect
 
+import android.annotation.SuppressLint
 import android.content.Intent
+import android.os.Build
 import android.os.Bundle
+import android.util.Log
 import android.widget.Button
 import android.widget.EditText
 import android.widget.ImageButton
 import android.widget.TextView
 import android.widget.Toast
+import androidx.annotation.MainThread
+import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
+import com.google.android.gms.auth.api.signin.GoogleSignInOptions
+import com.google.android.gms.auth.api.signin.GoogleSignIn
+import com.google.android.gms.auth.api.signin.GoogleSignInClient
+import com.google.android.gms.common.api.ApiException
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.auth.GoogleAuthProvider
+import com.google.firebase.firestore.FirebaseFirestore
 
 class LoginActivity : AppCompatActivity() {
     private lateinit var edtEmail: EditText
@@ -17,22 +28,36 @@ class LoginActivity : AppCompatActivity() {
     private lateinit var btnToRegister: TextView
     private lateinit var btnGoogleSignIn: ImageButton
     private lateinit var auth: FirebaseAuth
+    private lateinit var googleSignInClient: GoogleSignInClient
+    private val RC_SIGN_IN = 9001
 
+    @RequiresApi(Build.VERSION_CODES.O)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_login)
+
+        auth = FirebaseAuth.getInstance()
 
         edtEmail = findViewById(R.id.etUsername)
         edtPassword = findViewById(R.id.etPassword)
         btnLogin = findViewById(R.id.btnLogin)
 
+        //khởi tại GG signin client
+        val gso = GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
+            .requestIdToken(getString(R.string.default_web_client_id))
+            .requestEmail()
+            .build()
+
+        googleSignInClient = GoogleSignIn.getClient(this, gso)
+
         btnGoogleSignIn = findViewById(R.id.btnGoogleSignIn)
-//        btnGoogleSignIn.setOnClickListener {
-//            googleSignInClient.signOut().addOnCompleteListener {
-//                val signInIntent = googleSignInClient.signInIntent
-//                startActivityForResult(signInIntent, RC_SIGN_IN)
-//            }
-//        }
+        btnGoogleSignIn.setOnClickListener {
+            googleSignInClient.signOut().addOnCompleteListener {
+                val signInIntent = googleSignInClient.signInIntent
+                startActivityForResult(signInIntent, RC_SIGN_IN)
+            }
+        }
+
         btnLogin.setOnClickListener {
             val email = edtEmail.text.toString().trim()
             val password = edtPassword.text.toString()
@@ -56,5 +81,42 @@ class LoginActivity : AppCompatActivity() {
                 }
             }
         }
+
+        //đăng ký tài khoản
+        btnToRegister = findViewById(R.id.tvRegister)
+        btnToRegister.setOnClickListener {
+            startActivity(Intent(this, RegisterActivity::class.java))
+        }
     }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        if (requestCode == RC_SIGN_IN) {
+            val task = GoogleSignIn.getSignedInAccountFromIntent(data)
+            try {
+                val account = task.getResult(ApiException::class.java)
+                firebaseAuthWithGoogle(account.idToken!!)
+            } catch (e: ApiException) {
+                Log.w("GoogleSignIn", "Đăng nhập Google thất bại", e)
+            }
+        }
+    }
+
+    private fun firebaseAuthWithGoogle(idToken: String) {
+        val credential = GoogleAuthProvider.getCredential(idToken, null)
+        FirebaseAuth.getInstance().signInWithCredential(credential)
+            .addOnCompleteListener(this) { task ->
+                if (task.isSuccessful) {
+                    val user = FirebaseAuth.getInstance().currentUser
+                    val intent = Intent(this, MainActivity::class.java)
+                    startActivity(intent)
+                    finish()
+                } else {
+                    Toast.makeText(this, "Đăng nhập thất bại", Toast.LENGTH_SHORT).show()
+                }
+            }
+    }
+//    @Deprecated("This method has been deprecated in favor of using the\n      {@link OnBackPressedDispatcher} via {@link #getOnBackPressedDispatcher()}.\n      The OnBackPressedDispatcher controls how back button events are dispatched\n      to one or more {@link OnBackPressedCallback} objects.")
+//    @SuppressLint("MissingSuperCall")
+//    override fun onBackPressed(){}
 }
