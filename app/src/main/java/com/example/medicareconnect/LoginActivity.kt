@@ -1,6 +1,5 @@
 package com.example.medicareconnect
 
-import android.annotation.SuppressLint
 import android.content.Intent
 import android.os.Build
 import android.os.Bundle
@@ -10,7 +9,7 @@ import android.widget.EditText
 import android.widget.ImageButton
 import android.widget.TextView
 import android.widget.Toast
-import androidx.annotation.MainThread
+import android.widget.RadioGroup
 import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
@@ -28,6 +27,7 @@ class LoginActivity : AppCompatActivity() {
     private lateinit var btnToRegister: TextView
     private lateinit var btnGoogleSignIn: ImageButton
     private lateinit var auth: FirebaseAuth
+    private lateinit var db: FirebaseFirestore
     private lateinit var googleSignInClient: GoogleSignInClient
     private val RC_SIGN_IN = 9001
 
@@ -37,6 +37,7 @@ class LoginActivity : AppCompatActivity() {
         setContentView(R.layout.activity_login)
 
         auth = FirebaseAuth.getInstance()
+        db = FirebaseFirestore.getInstance()
 
         edtEmail = findViewById(R.id.etUsername)
         edtPassword = findViewById(R.id.etPassword)
@@ -69,17 +70,32 @@ class LoginActivity : AppCompatActivity() {
                 startActivity(Intent(this, DoctorActivity::class.java))
                 finish()
             }
-            auth.signInWithEmailAndPassword(email, password).addOnCompleteListener {
-                    task ->
+
+            auth.signInWithEmailAndPassword(email, password).addOnCompleteListener { task ->
                 if (task.isSuccessful) {
-                    Toast.makeText(this, "Đăng nhập thành công", Toast.LENGTH_SHORT).show()
-                    startActivity(Intent(this, MainActivity::class.java))
-                    finish()
+                    val uid = auth.currentUser?.uid
+                    if (uid != null) {
+                        db.collection("users").document(uid).get()
+                            .addOnSuccessListener { document ->
+                                val role = document.getString("role")
+
+                                if (role == "doctor") {
+                                    startActivity(Intent(this, DoctorActivity::class.java))
+                                } else {
+                                    startActivity(Intent(this, MainActivity::class.java))
+                                }
+                                finish()
+                            }
+                            .addOnFailureListener {
+                                Toast.makeText(this, "Không thể lấy thông tin vai trò", Toast.LENGTH_SHORT).show()
+                            }
+                    }
                 } else {
                     val error = task.exception?.message ?: "Lỗi không xác định"
                     Toast.makeText(this, "Đăng nhập thất bại: $error", Toast.LENGTH_SHORT).show()
                 }
             }
+
         }
 
         //đăng ký tài khoản
@@ -108,13 +124,79 @@ class LoginActivity : AppCompatActivity() {
             .addOnCompleteListener(this) { task ->
                 if (task.isSuccessful) {
                     val user = FirebaseAuth.getInstance().currentUser
-                    val intent = Intent(this, MainActivity::class.java)
-                    startActivity(intent)
-                    finish()
+                    val uid = user?.uid ?: return@addOnCompleteListener
+
+                    db.collection("users").document(uid).get()
+                        .addOnSuccessListener { document ->
+                            if (document.exists()) {
+                                // user đã tồn tại thì đọc role và chuyển Activity
+                                val role = document.getString("role")
+                                if (role == "doctor") {
+                                    startActivity(Intent(this, DoctorActivity::class.java))
+                                } else {
+                                    startActivity(Intent(this, MainActivity::class.java))
+                                }
+                                finish()
+                            } else {
+                                // user mới thì hiện dialog chọn role
+                                showRoleSelectionDialog(user.email ?: "", uid)
+                            }
+                        }
+
                 } else {
                     Toast.makeText(this, "Đăng nhập thất bại", Toast.LENGTH_SHORT).show()
                 }
             }
+    }
+
+    private fun showRoleSelectionDialog(email: String, uid: String) {
+        val dialogView = layoutInflater.inflate(R.layout.dialog_select_role, null)
+        val radioGroup = dialogView.findViewById<RadioGroup>(R.id.radioGroupRole)
+        val btnConfirm = dialogView.findViewById<Button>(R.id.btnConfirmRole)
+
+        val alertDialog = androidx.appcompat.app.AlertDialog.Builder(this)
+            .setView(dialogView)
+            .setCancelable(false)
+            .create()
+
+        btnConfirm.setOnClickListener {
+            val selectedId = radioGroup.checkedRadioButtonId
+            if (selectedId == -1) {
+                Toast.makeText(this, "Please select a role", Toast.LENGTH_SHORT).show()
+                return@setOnClickListener
+            }
+
+            val role = when (selectedId) {
+                R.id.radioDoctor -> "doctor"
+                R.id.radioPatient -> "patient"
+                else -> "patient"
+            }
+
+            val db = FirebaseFirestore.getInstance()
+            val userData = hashMapOf(
+                "email" to email,
+                "role" to role
+            )
+
+            db.collection("users").document(uid)
+                .set(userData)
+                .addOnSuccessListener {
+                    Toast.makeText(this, "Role saved successfully!", Toast.LENGTH_SHORT).show()
+                    alertDialog.dismiss()
+
+                    if (role == "doctor") {
+                        startActivity(Intent(this, DoctorActivity::class.java))
+                    } else {
+                        startActivity(Intent(this, MainActivity::class.java))
+                    }
+                    finish()
+                }
+                .addOnFailureListener {
+                    Toast.makeText(this, "Error saving role: ${it.message}", Toast.LENGTH_SHORT).show()
+                }
+        }
+
+        alertDialog.show()
     }
 //    @Deprecated("This method has been deprecated in favor of using the\n      {@link OnBackPressedDispatcher} via {@link #getOnBackPressedDispatcher()}.\n      The OnBackPressedDispatcher controls how back button events are dispatched\n      to one or more {@link OnBackPressedCallback} objects.")
 //    @SuppressLint("MissingSuperCall")
